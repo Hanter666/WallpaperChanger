@@ -9,6 +9,6 @@ namespace WallpaperChanger.Json
 {
     public interface IJsonReader
     {
-        public Dictionary<string, (string,int)> Deserialize(string jsonString);
+        public Dictionary<string, string> Deserialize(string jsonString);
     }
 }
