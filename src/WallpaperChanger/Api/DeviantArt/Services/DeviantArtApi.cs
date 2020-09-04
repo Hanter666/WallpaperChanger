@@ -2,6 +2,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using WallpaperChanger.Api.DeviantArt.Models;
 using WallpaperChanger.Json;
@@ -19,7 +20,7 @@ namespace WallpaperChanger.Api.DeviantArt.Services
         private readonly ILogger _logger;
 
         private AccessToken _token;
-        
+
         public DeviantArtApi(HttpClient client, Credentials credentials, IJsonDeserializer deserializer, ILogger<DeviantArtApi> logger)
         {
             _client = client;
@@ -30,7 +31,7 @@ namespace WallpaperChanger.Api.DeviantArt.Services
             _token = new AccessToken();
         }
 
-        private async Task AuthorizeRequest(HttpRequestMessage message)
+        private async Task<HttpRequestMessage> AuthorizeRequest(HttpRequestMessage message)
         {
             if(!_token.IsValid())
             {
@@ -38,17 +39,18 @@ namespace WallpaperChanger.Api.DeviantArt.Services
             }
 
             message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token.Token);
+            return message;
         }
 
         private async Task<AccessToken> GetNewAccessToken()
         {
             _logger.LogDebug("Requesting new access token for Devianart");
 
-            var url = string.Format(AUTHORIZATION_URI, _credentials.Username, _credentials.Password);
+            var url = string.Format(AUTHORIZATION_URI, _credentials.ClientId, _credentials.ClientSecret);
             var response = await _client.GetAsync(url);
-            var responseStream = await response.Content.ReadAsStreamAsync();
-            var tokenReponse = await _deserializer.Deserialize<AccessTokenResponse>(responseStream);
-            
+            var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            var tokenReponse = await _deserializer.Deserialize<AccessTokenResponse>(responseStream).ConfigureAwait(false);
+
             if(tokenReponse.Status != "success")
             {
                 _logger.LogError("Failed to get new access token for Devianart");
@@ -70,12 +72,12 @@ namespace WallpaperChanger.Api.DeviantArt.Services
             _logger.LogDebug("Requesting url {url}", url);
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-            await AuthorizeRequest(request);
+            request = await AuthorizeRequest(request);
 
-            var response = await _client.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStreamAsync();
-            var deviation = await _deserializer.Deserialize<DeviationObject>(responseContent);
-            return new Image[0];
+            var response = await _client.SendAsync(request).ConfigureAwait(false);
+            var responseContent = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            var deviation = await _deserializer.Deserialize<DeviationObject>(responseContent).ConfigureAwait(false);
+            return Array.Empty<Image>();
         }
     }
 }

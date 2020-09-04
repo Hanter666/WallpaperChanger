@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,19 +25,10 @@ namespace WallpaperChanger
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IApi _api;
-
-        public MainWindow(IApi api)
-        {
+        public MainWindow(IReactiveObject viewModel)
+        {           
             InitializeComponent();
-            //var d = new ApiFactory();
-            //d.CreateApi<DeviantArtApiOld>();
-            _api = api;
-        }
-
-        private async void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var resp = await _api.FindByTag("F9921FC4-3A0F-90A9-3625-AA8E105747AD");
+            DataContext = viewModel;
         }
     }
 }

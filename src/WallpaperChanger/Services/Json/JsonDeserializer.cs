@@ -1,8 +1,9 @@
 ﻿using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WallpaperChanger.Json;
 
-namespace WallpaperChanger.Json
+namespace WallpaperChanger.Services.Json
 {
     public class JsonDeserializer : IJsonDeserializer
     {

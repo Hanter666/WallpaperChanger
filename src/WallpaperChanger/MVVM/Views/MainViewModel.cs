@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ReactiveUI;
 
-namespace WallpaperChanger
+namespace WallpaperChanger.MVVM.Models
 {
-    public class Image
+    public class MainViewModel : ReactiveObject
     {
-    }
         
+    }
 }
