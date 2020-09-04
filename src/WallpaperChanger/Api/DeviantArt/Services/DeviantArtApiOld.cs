@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Net.Http;
+using System.Threading.Tasks;
 using WallpaperChanger.Json;
 
 namespace WallpaperChanger.Api
 {
-    public class DeviantArtApi : IApi
+    public class DeviantArtApiOld : IApi
     {
         private const string tokenUrl =
             "https://www.deviantart.com/oauth2/token?grant_type=client_credentials&client_id=&client_secret=";
@@ -21,17 +17,17 @@ namespace WallpaperChanger.Api
         private readonly IJsonReader _reader;
         private string _token;
 
-        public DeviantArtApi(HttpClient client, ILogger<DeviantArtApi> logger,IJsonReader reader)
+        public DeviantArtApiOld(HttpClient client, ILogger<DeviantArtApiOld> logger,IJsonReader reader)
         {
             _client = client;
             _logger = logger;
             _reader = reader;
         }
 
-        public DeviantArtApi()
+        public DeviantArtApiOld()
         {
             _client = new HttpClient();
-            _logger = new Logger<DeviantArtApi>(new NullLoggerFactory());
+            _logger = new Logger<DeviantArtApiOld>(new NullLoggerFactory());
             _reader = new JsonReader();
             if (!IsTokenValid(_token))
             {
@@ -46,7 +42,7 @@ namespace WallpaperChanger.Api
             var jsonString = responseContent.ReadAsStringAsync().Result;
             var responseJson = _reader.Deserialize(jsonString);
             _logger.LogDebug("Check token experience");
-            return responseJson.TryGetValue("status", out var val) && val.Item1 == "success";
+            return responseJson.TryGetValue("status", out var val) && val == "success";
         }
 
         private string GetNewToken()
@@ -56,16 +52,17 @@ namespace WallpaperChanger.Api
             var jsonString = responseContent.ReadAsStringAsync().Result;
             var responseJson = _reader.Deserialize(jsonString);
             _logger.LogDebug("Check token experience");
-            if (responseJson.TryGetValue("status", out var val) && val.Item1 == "success")
+            if (responseJson.TryGetValue("status", out var val) && val == "success")
             {
-                return responseJson["access_token"].Item1??string.Empty;
+                return responseJson["access_token"]??string.Empty;
             }
             return string.Empty;
         }
-        public Image[] FindByTag(string tag)
+
+        public Task<Image[]> FindByTag(string tag)
         {
             _logger.LogDebug("Requesting image with tag {tag}", tag);
-            return  new Image[0];
+            return Task.FromResult(new Image[0]);
         }
     }
 }
