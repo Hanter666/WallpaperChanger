@@ -30,7 +30,7 @@ namespace WallpaperChanger
         {
             InitializeComponent();
             DataContext = viewModel;
-            backgroundManager.SetBackgroudApp("Spotify");
+            backgroundManager.SetBackgroudApp(null,"notepad++");
         }
     }
 }

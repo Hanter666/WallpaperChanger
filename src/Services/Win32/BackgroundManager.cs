@@ -16,7 +16,7 @@ namespace WallpaperChanger.Services.Win32
         private IntPtr _progmanWindow;
         private IntPtr _workerwWindow;
 
-        public BackgroundManager(ILogger logger)
+        public BackgroundManager(ILogger<BackgroundManager> logger)
         {
             _logger = logger;
             Initialise();
@@ -24,7 +24,7 @@ namespace WallpaperChanger.Services.Win32
         private IntPtr GetProgmanWindowPtr()
         {
             _logger.LogDebug("Trying find Progman window");
-            IntPtr progmanWindow = WinApi.FindWindowA(_progmanWindowName,null);
+            IntPtr progmanWindow = WinApi.FindWindow(_progmanWindowName,null);
             if (progmanWindow == IntPtr.Zero)
             {
                 _logger.LogError("Progman is {0}",progmanWindow);
@@ -59,7 +59,7 @@ namespace WallpaperChanger.Services.Win32
         }
         public void SetBackgroudApp(string windowName,string className = null)
         {
-            IntPtr targetWindow = WinApi.FindWindowA(className,windowName);
+            IntPtr targetWindow = WinApi.FindWindow(className,windowName);
             if (targetWindow!=IntPtr.Zero)
             {
                WinApi.SetParent(targetWindow,_workerwWindow); 

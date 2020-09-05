@@ -6,7 +6,7 @@ namespace WallpaperChanger.Services.Win32
     public static class WinApi
     {
         [DllImport("user32.dll", SetLastError=true)]
-        public static extern IntPtr FindWindowA(string className, string windowName);
+        public static extern IntPtr FindWindow(string className, string windowName);
 
          [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className,  string windowTitle);

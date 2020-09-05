@@ -32,9 +32,6 @@ namespace WallpaperChanger
         }
 
         private IServiceProvider RegisterServices() => new ServiceCollection()
-                .AddSingleton<IBackgroundManager,BackgroundManager>()
-                .AddSingleton<WallpaperManager>()
-
                 .AddSingleton<IJsonDeserializer, JsonDeserializer>()
                 .AddSingleton<HttpClient>()
                 .AddSingleton(new Credentials
@@ -47,7 +44,10 @@ namespace WallpaperChanger
 
                 .AddSingleton<MainViewModel>()
 
-                .AddSingleton(s => new MainWindow(s.GetRequiredService<MainViewModel>(),s.GetRequiredService<BackgroundManager>()))
+                .AddSingleton<IBackgroundManager,BackgroundManager>()
+                .AddSingleton<WallpaperManager>()
+
+                .AddSingleton(s => new MainWindow(s.GetRequiredService<MainViewModel>(),s.GetRequiredService<IBackgroundManager>()))
 
                 .BuildServiceProvider();
     }

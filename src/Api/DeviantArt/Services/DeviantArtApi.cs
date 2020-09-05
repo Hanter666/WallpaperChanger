@@ -66,7 +66,7 @@ namespace WallpaperChanger.Api.DeviantArt.Services
             return token;
         }
 
-        public async Task<Image[]> FindByTag(string tag)
+        public async Task<IImage[]> FindByTag(string tag)
         {
             var url = $"https://www.deviantart.com/api/v1/oauth2/deviation/{tag}";
             _logger.LogDebug("Requesting url {url}", url);
