@@ -11,6 +11,8 @@ using WallpaperChanger.Json;
 using WallpaperChanger.Models;
 using WallpaperChanger.MVVM.Models;
 using WallpaperChanger.Services.Json;
+using WallpaperChanger.Services.Wallpaper;
+using WallpaperChanger.Services.Win32;
 
 namespace WallpaperChanger
 {
@@ -30,9 +32,12 @@ namespace WallpaperChanger
         }
 
         private IServiceProvider RegisterServices() => new ServiceCollection()
+                .AddSingleton<IBackgroundManager,BackgroundManager>()
+                .AddSingleton<WallpaperManager>()
+
                 .AddSingleton<IJsonDeserializer, JsonDeserializer>()
-                .AddSingleton<HttpClient>(new HttpClient())
-                .AddSingleton<Credentials>(new Credentials
+                .AddSingleton<HttpClient>()
+                .AddSingleton(new Credentials
                 {
                     ClientId = "13260",
                     ClientSecret = "1f2df70af65f9a33270c2cee5aef9494"
@@ -40,9 +45,9 @@ namespace WallpaperChanger
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>))
                 .AddSingleton<IApi, DeviantArtApi>()
 
-                .AddSingleton<IReactiveObject>(new MainViewModel())
+                .AddSingleton<MainViewModel>()
 
-                .AddSingleton((s => new MainWindow(s.GetRequiredService<MainViewModel>())))
+                .AddSingleton(s => new MainWindow(s.GetRequiredService<MainViewModel>(),s.GetRequiredService<BackgroundManager>()))
 
                 .BuildServiceProvider();
     }

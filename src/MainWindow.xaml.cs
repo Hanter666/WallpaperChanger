@@ -14,9 +14,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using  WallpaperChanger.Api;
+using WallpaperChanger.Api;
 using WallpaperChanger.Api.DeviantArt.Services;
 using WallpaperChanger.Json;
+using WallpaperChanger.Services.Win32;
 
 namespace WallpaperChanger
 {
@@ -25,10 +26,11 @@ namespace WallpaperChanger
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(IReactiveObject viewModel)
-        {           
+        public MainWindow(IReactiveObject viewModel,IBackgroundManager backgroundManager)
+        {
             InitializeComponent();
             DataContext = viewModel;
+            backgroundManager.SetBackgroudApp("Spotify");
         }
     }
 }
